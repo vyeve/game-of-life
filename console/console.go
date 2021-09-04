@@ -37,10 +37,11 @@ func (c *console) WriteFrame(p []byte) (err error) {
 	return c.flush()
 }
 
-func (c *console) Close() error {
+func (c *console) Clear() error {
 	c.Lock()
 	defer c.Unlock()
-	return c.flush()
+	c.buf.Reset()
+	return c.clearTerm()
 }
 
 func (c *console) flush() error {

@@ -1,10 +1,8 @@
 package console
 
-import (
-	"io"
-)
-
 type Console interface {
+	// WriteFrame clears console and writes bytes
 	WriteFrame(frame []byte) error
-	io.Closer
+	// Clear clears console
+	Clear() error
 }
