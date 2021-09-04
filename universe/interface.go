@@ -1,4 +1,4 @@
-package game
+package universe
 
 type Universe interface {
 	NextGen() Universe
