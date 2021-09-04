@@ -5,5 +5,6 @@ import (
 )
 
 type Console interface {
-	io.WriteCloser
+	WriteFrame(frame []byte) error
+	io.Closer
 }
