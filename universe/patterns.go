@@ -1,9 +1,11 @@
-// Source: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+// Patterns source: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 //
 package universe
 
 import (
+	"bufio"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -22,142 +24,74 @@ const (
 )
 
 var (
-	gliderData = [][]bool{
-		{false, false, false, false, false},
-		{false, false, true, false, false},
-		{false, false, false, true, false},
-		{false, true, true, true, false},
-	}
-	/*
-		| | |█| | |
-		| | | |█| |
-		| |█|█|█| |
-		| | | | | |
-	*/
-	pulsarData = [][]bool{
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, false, false, true, true, true, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, true, true, true, false, false, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, true, false, false, false, false, true, false, true, false, false, false, false, true, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-	}
-	/*
-		| | | | | | | | | | | | | | | | | |
-		| | | | | | | | | | | | | | | | | |
-		| | | | |█|█|█| | | |█|█|█| | | | |
-		| | | | | | | | | | | | | | | | | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | | | |█|█|█| | | |█|█|█| | | | |
-		| | | | | | | | | | | | | | | | | |
-		| | | | |█|█|█| | | |█|█|█| | | | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | |█| | | | |█| |█| | | | |█| | |
-		| | | | | | | | | | | | | | | | | |
-		| | | | |█|█|█| | | |█|█|█| | | | |
-		| | | | | | | | | | | | | | | | | |
-		| | | | | | | | | | | | | | | | | |
-	*/
-	mwssData = [][]bool{
-		{false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, true, true, false, false, false},
-		{false, false, true, true, true, false, true, true, false, false},
-		{false, false, true, true, true, true, true, false, false, false},
-		{false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false},
-	}
-	/*
-		| | | | | | | | | | |
-		| | | | | | | | | | |
-		| | | | | |█|█| | | |
-		| | |█|█|█| |█|█| | |
-		| | |█|█|█|█|█| | | |
-		| | | |█|█|█| | | | |
-		| | | | | | | | | | |
-		| | | | | | | | | | |
-	*/
-	gunData = [][]bool{
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false},
-		{false, true, true, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, true, true, false, false, false, false, false, false, false, false, true, false, false, false, true, false, true, true, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, true, true, false, false, false, false, false, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-	}
-	/*
-		| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
-		| | | | | | | | | | | | | | | | | | | | | | | | | | |█| | | | | | | | | | | |
-		| | | | | | | | | | | | | | | | | | | | | | | | |█| |█| | | | | | | | | | | |
-		| | | | | | | | | | | | | | |█|█| | | | | | |█|█| | | | | | | | | | | |█|█| |
-		| | | | | | | | | | | | | |█| | | |█| | | | |█|█| | | | | | | | | | | |█|█| |
-		| |█|█| | | | | | | | | |█| | | | | |█| | | |█|█| | | | | | | | | | | | | | |
-		| |█|█| | | | | | | | | |█| | | |█| |█|█| | | | |█| |█| | | | | | | | | | | |
-		| | | | | | | | | | | | |█| | | | | |█| | | | | | | |█| | | | | | | | | | | |
-		| | | | | | | | | | | | | |█| | | |█| | | | | | | | | | | | | | | | | | | | |
-		| | | | | | | | | | | | | | |█|█| | | | | | | | | | | | | | | | | | | | | | |
-		| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
-	*/
-	decathlonData = [][]bool{
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, true, true, true, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, true, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, false, false},
-	}
-	/*
-		| | | | | | | | | | | |
-		| | | | | |█| | | | | |
-		| | | | | |█| | | | | |
-		| | | | |█|█|█| | | | |
-		| | | | | | | | | | | |
-		| | | | |█|█|█| | | | |
-		| | | | | |█| | | | | |
-		| | | | | |█| | | | | |
-		| | | | | |█| | | | | |
-		| | | | | |█| | | | | |
-		| | | | |█|█|█| | | | |
-		| | | | | | | | | | | |
-		| | | | | | | | | | | |
-		| | | | |█|█|█| | | | |
-		| | | | | |█| | | | | |
-		| | | | | |█| | | | | |
-		| | | | | | | | | | | |
-	*/
+	glider = `
+	| | |█| | |
+	| | | |█| |
+	| |█|█|█| |
+	| | | | | |	
+	`
+	pulse = `
+	| | | | | | | | | | | | | | | | | |
+	| | | | | | | | | | | | | | | | | |
+	| | | | |█|█|█| | | |█|█|█| | | | |
+	| | | | | | | | | | | | | | | | | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | | | |█|█|█| | | |█|█|█| | | | |
+	| | | | | | | | | | | | | | | | | |
+	| | | | |█|█|█| | | |█|█|█| | | | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | |█| | | | |█| |█| | | | |█| | |
+	| | | | | | | | | | | | | | | | | |
+	| | | | |█|█|█| | | |█|█|█| | | | |
+	| | | | | | | | | | | | | | | | | |
+	| | | | | | | | | | | | | | | | | |	
+	`
+	mwss = `
+	| | | | | | | | | | |
+	| | | | | | | | | | |
+	| | | | | |█|█| | | |
+	| | |█|█|█| |█|█| | |
+	| | |█|█|█|█|█| | | |
+	| | | |█|█|█| | | | |
+	| | | | | | | | | | |
+	| | | | | | | | | | |	
+	`
+	gun = `
+	| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+	| | | | | | | | | | | | | | | | | | | | | | | | | | |█| | | | | | | | | | | |
+	| | | | | | | | | | | | | | | | | | | | | | | | |█| |█| | | | | | | | | | | |
+	| | | | | | | | | | | | | | |█|█| | | | | | |█|█| | | | | | | | | | | |█|█| |
+	| | | | | | | | | | | | | |█| | | |█| | | | |█|█| | | | | | | | | | | |█|█| |
+	| |█|█| | | | | | | | | |█| | | | | |█| | | |█|█| | | | | | | | | | | | | | |
+	| |█|█| | | | | | | | | |█| | | |█| |█|█| | | | |█| |█| | | | | | | | | | | |
+	| | | | | | | | | | | | |█| | | | | |█| | | | | | | |█| | | | | | | | | | | |
+	| | | | | | | | | | | | | |█| | | |█| | | | | | | | | | | | | | | | | | | | |
+	| | | | | | | | | | | | | | |█|█| | | | | | | | | | | | | | | | | | | | | | |
+	| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |	
+	`
+	decathlon = `
+	| | | | | | | | | | | |
+	| | | | | |█| | | | | |
+	| | | | | |█| | | | | |
+	| | | | |█|█|█| | | | |
+	| | | | | | | | | | | |
+	| | | | | | | | | | | |
+	| | | | |█|█|█| | | | |
+	| | | | | |█| | | | | |
+	| | | | | |█| | | | | |
+	| | | | | |█| | | | | |
+	| | | | | |█| | | | | |
+	| | | | |█|█|█| | | | |
+	| | | | | | | | | | | |
+	| | | | | | | | | | | |
+	| | | | |█|█|█| | | | |
+	| | | | | |█| | | | | |
+	| | | | | |█| | | | | |
+	| | | | | | | | | | | |	
+	`
 )
 
 type (
@@ -177,23 +111,23 @@ func newPattern(data [][]bool) Pattern {
 }
 
 func NewGliderPattern() Pattern {
-	return newPattern(gliderData)
+	return newPattern(parseText(glider))
 }
 
 func NewPulsePattern() Pattern {
-	return newPattern(pulsarData)
+	return newPattern(parseText(pulse))
 }
 
 func NewMWSSPattern() Pattern {
-	return newPattern(mwssData)
+	return newPattern(parseText(mwss))
 }
 
 func NewGunPattern() Pattern {
-	return newPattern(gunData)
+	return newPattern(parseText(gun))
 }
 
 func NewDecathlonPattern() Pattern {
-	return newPattern(decathlonData)
+	return newPattern(parseText(decathlon))
 }
 
 func NewRandomPattern() Pattern {
@@ -221,4 +155,27 @@ func randomizeSlice(w, h int) [][]bool {
 		data[rand.Intn(h)][rand.Intn(w)] = true
 	}
 	return data
+}
+
+func parseText(src string) [][]bool {
+	scanner := bufio.NewScanner(strings.NewReader(src))
+	out := make([][]bool, 0)
+	for scanner.Scan() {
+		line := strings.Split(strings.TrimSpace(scanner.Text()), "|")
+		row := make([]bool, 0, len(line))
+		for _, c := range line {
+			if len(c) == 0 {
+				continue
+			}
+			var isAlive bool
+			if c == string(aliveChar) {
+				isAlive = true
+			}
+			row = append(row, isAlive)
+		}
+		if len(row) > 0 {
+			out = append(out, row)
+		}
+	}
+	return out
 }
