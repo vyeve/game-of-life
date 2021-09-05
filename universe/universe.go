@@ -2,6 +2,7 @@ package universe
 
 import (
 	"bytes"
+	"runtime"
 	"strings"
 )
 
@@ -9,6 +10,17 @@ const (
 	deadChar  = ' '
 	aliveChar = '\u2588'
 )
+
+var (
+	colorize, reset string
+)
+
+func init() {
+	if runtime.GOOS != "windows" {
+		colorize = "\033[33m"
+		reset = "\033[0m"
+	}
+}
 
 type universe struct {
 	fields [][]bool
@@ -105,6 +117,7 @@ func (u *universe) State() []byte {
 			buf.WriteRune('\t')
 		}
 		buf.WriteRune('|')
+		buf.WriteString(colorize)
 		for _, val := range row {
 			if val {
 				buf.WriteRune(aliveChar)
@@ -112,6 +125,7 @@ func (u *universe) State() []byte {
 				buf.WriteRune(deadChar)
 			}
 		}
+		buf.WriteString(reset)
 		buf.WriteRune('|')
 		buf.WriteRune('\n')
 	}
