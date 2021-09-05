@@ -13,12 +13,17 @@ const (
 
 var (
 	colorize, reset string
+	topBorder       = "_"
+	bottomBorder    = "_"
 )
 
+// unix specific symbols
 func init() {
 	if runtime.GOOS != "windows" {
 		colorize = "\033[33m"
 		reset = "\033[0m"
+		topBorder = "\u23bd"
+		bottomBorder = "\u23ba"
 	}
 }
 
@@ -146,8 +151,9 @@ func (u *universe) State() []byte {
 }
 
 func writeTopBorder(buf *bytes.Buffer, n int) {
-	buf.WriteString(strings.Repeat("\u23bd", n))
+	buf.WriteString(strings.Repeat(topBorder, n))
 }
+
 func writeBottomBorder(buf *bytes.Buffer, n int) {
-	buf.WriteString(strings.Repeat("\u23ba", n))
+	buf.WriteString(strings.Repeat(bottomBorder, n))
 }
