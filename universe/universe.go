@@ -6,11 +6,8 @@ import (
 )
 
 const (
-	deadChar    = ' '
-	aliveChar   = '\u2588'
-	newLineChar = '\n'
-	tabChar     = '\t'
-	pipeChar    = '|'
+	deadChar  = ' '
+	aliveChar = '\u2588'
 )
 
 type universe struct {
@@ -99,15 +96,15 @@ func (u *universe) State() []byte {
 	var buf bytes.Buffer
 	var n int
 	for i, row := range u.fields {
-		buf.WriteRune(tabChar)
+		buf.WriteRune('\t')
 		if i == 0 {
 			n = len(row)
 			buf.WriteRune(' ')
-			writeHorizontalBorder(&buf, n)
-			buf.WriteRune(newLineChar)
-			buf.WriteRune(tabChar)
+			writeTopBorder(&buf, n)
+			buf.WriteRune('\n')
+			buf.WriteRune('\t')
 		}
-		buf.WriteRune(pipeChar)
+		buf.WriteRune('|')
 		for _, val := range row {
 			if val {
 				buf.WriteRune(aliveChar)
@@ -115,17 +112,20 @@ func (u *universe) State() []byte {
 				buf.WriteRune(deadChar)
 			}
 		}
-		buf.WriteRune(pipeChar)
-		buf.WriteRune(newLineChar)
+		buf.WriteRune('|')
+		buf.WriteRune('\n')
 	}
-	buf.WriteRune(tabChar)
-	buf.WriteRune(pipeChar)
-	writeHorizontalBorder(&buf, n)
-	buf.WriteRune(pipeChar)
-	buf.WriteRune(newLineChar)
+	buf.WriteRune('\t')
+	buf.WriteRune(' ')
+	writeBottomBorder(&buf, n)
+	buf.WriteRune(' ')
+	buf.WriteRune('\n')
 	return buf.Bytes()
 }
 
-func writeHorizontalBorder(buf *bytes.Buffer, n int) {
-	buf.WriteString(strings.Repeat("_", n))
+func writeTopBorder(buf *bytes.Buffer, n int) {
+	buf.WriteString(strings.Repeat("\u23bd", n))
+}
+func writeBottomBorder(buf *bytes.Buffer, n int) {
+	buf.WriteString(strings.Repeat("\u23ba", n))
 }
