@@ -10,12 +10,16 @@ import (
 	"github.com/vyeve/game-of-life/universe"
 )
 
+const (
+	numLoops = 100
+)
+
 func main() {
 	var (
 		p   int
 		pat universe.Pattern
 	)
-	flag.IntVar(&p, "p", 1, "")
+	flag.IntVar(&p, "p", 5, "init pattern to run")
 	flag.Parse()
 
 	switch p {
@@ -34,15 +38,16 @@ func main() {
 	default:
 		pat = universe.NewPulsePattern()
 	}
+
 	wr := console.New(os.Stderr)
 	u := universe.NewUniverse(pat)
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < numLoops; i++ {
 		p := u.State()
 		if err := wr.WriteFrame(p); err != nil {
 			log.Fatal(err)
 		}
-		time.Sleep(time.Millisecond * 1000)
+		time.Sleep(time.Millisecond * 500)
 		u = u.NextGen()
 	}
 
