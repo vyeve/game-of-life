@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	GlidePattern = iota + 1
-	PulsePattern
+	GliderPattern = iota + 1
+	PulsarPattern
 	MWSSPattern
 	GunPattern
 	DecathlonPattern
@@ -30,7 +30,7 @@ var (
 	| |█|█|█| |
 	| | | | | |	
 	`
-	pulse = `
+	pulsar = `
 	| | | | | | | | | | | | | | | | | |
 	| | | | | | | | | | | | | | | | | |
 	| | | | |█|█|█| | | |█|█|█| | | | |
@@ -114,8 +114,8 @@ func NewGliderPattern() Pattern {
 	return newPattern(parseText(glider))
 }
 
-func NewPulsePattern() Pattern {
-	return newPattern(parseText(pulse))
+func NewPulsarPattern() Pattern {
+	return newPattern(parseText(pulsar))
 }
 
 func NewMWSSPattern() Pattern {

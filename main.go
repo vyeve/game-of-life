@@ -23,10 +23,10 @@ func main() {
 	flag.Parse()
 
 	switch p {
-	case universe.GlidePattern:
+	case universe.GliderPattern:
 		pat = universe.NewGliderPattern()
-	case universe.PulsePattern:
-		pat = universe.NewPulsePattern()
+	case universe.PulsarPattern:
+		pat = universe.NewPulsarPattern()
 	case universe.MWSSPattern:
 		pat = universe.NewMWSSPattern()
 	case universe.GunPattern:
@@ -36,7 +36,7 @@ func main() {
 	case universe.RandomPattern:
 		pat = universe.NewRandomPattern()
 	default:
-		pat = universe.NewPulsePattern()
+		pat = universe.NewPulsarPattern()
 	}
 
 	wr := console.New(os.Stderr)

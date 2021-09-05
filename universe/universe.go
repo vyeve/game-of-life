@@ -43,7 +43,7 @@ func NewGliderUniverse() Universe {
 }
 
 func NewPulsarUniverse() Universe {
-	return NewUniverse(NewPulsePattern())
+	return NewUniverse(NewPulsarPattern())
 }
 
 func NewMWSSUniverse() Universe {
@@ -52,6 +52,14 @@ func NewMWSSUniverse() Universe {
 
 func NewGunUniverse() Universe {
 	return NewUniverse(NewGunPattern())
+}
+
+func NewDecathlonUniverse() Universe {
+	return NewUniverse(NewDecathlonPattern())
+}
+
+func NewRandomUniverse() Universe {
+	return NewUniverse(NewRandomPattern())
 }
 
 func newUniverse(width, height int) *universe {
